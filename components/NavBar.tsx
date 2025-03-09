@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import {
 	IconCalendar,
 	IconMenu,
@@ -12,6 +12,8 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
+import AuthButton from "./AuthButton";
+
 
 interface HoverPosition {
 	left: number;
@@ -69,9 +71,9 @@ const Navbar = () => {
 	};
 
 	return (
-		<div className="relative flex justify-center z-10">
+		<div className="relative flex justify-center z-10 h-16">
 			<motion.nav
-				className={`fixed top-4 mx-auto inset-x-0 w-[95%] max-w-7xl rounded-full z-50 ${isScrolled ? "bg-neutral-50 dark:bg-neutral-900/80 backdrop-blur-2xl shadow-[0px_-4px_6px_0px_var(--neutral-100),0px_4px_6px_0px_var(--neutral-100)] dark:shadow-[0px_-4px_6px_0px_var(--neutral-800),0px_4px_6px_0px_var(--neutral-800)]" : ""}`}
+				className={`fixed top-4 mx-auto inset-x-0 w-[95%] max-w-7xl rounded-full z-50 ${isScrolled ? "bg-neutral-50/70 dark:bg-neutral-900/80 backdrop-blur-2xl shadow-[0px_-4px_6px_0px_var(--neutral-100),0px_4px_6px_0px_var(--neutral-100)] dark:shadow-[0px_-4px_6px_0px_var(--neutral-800),0px_4px_6px_0px_var(--neutral-800)]" : ""}`}
 				onMouseLeave={handleMouseLeave}
 			>
 				<div className="container mx-auto px-8 py-2">
@@ -108,6 +110,8 @@ const Navbar = () => {
 									<IconMoon size={20} />
 								)}
 							</button>
+							<AuthButton/>
+
 							{/* Hover Effect */}
 							{isHovered && (
 								<motion.div

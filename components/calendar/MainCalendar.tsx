@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import { IconPlus, IconMapPin } from "@tabler/icons-react";
 import { CalendarEvent, ViewType, SlotInfo } from "../../types";
@@ -64,6 +64,8 @@ const MainCalendar: React.FC<MainCalendarProps> = ({
     onSelectSlot({
       start: start.toDate(),
       end: end.toDate(),
+      slots: [],
+      action: "select"
     });
   };
 

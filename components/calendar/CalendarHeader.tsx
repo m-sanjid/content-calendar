@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import {
   IconChevronLeft,
@@ -10,9 +10,12 @@ import {
   IconLayoutGrid,
   IconPlus,
   IconSearch,
+  IconLayoutSidebar,
+  IconLayoutSidebarFilled
 } from "@tabler/icons-react";
 import { ViewType } from "../../types";
 import { Button } from "../ui/button";
+import { motion, AnimatePresence } from "motion/react";
 
 interface CalendarHeaderProps {
   currentDate: moment.Moment;
@@ -56,6 +59,8 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       return currentDate.format("dddd, MMMM D, YYYY");
     }
   };
+  const [hover,setHover] = useState(false)
+  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
 
   return (
     <div className="border-b border-neutral-200 dark:border-neutral-700 p-4">
@@ -63,10 +68,12 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         <div className="flex items-center space-x-2">
           <button
             onClick={onToggleSidebar}
+            onMouseEnter={()=>setHover(true)}
+            onMouseLeave={()=>setHover(false)}
             className="p-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-700"
             aria-label="Toggle sidebar"
           >
-            <IconList size={20} />
+            {hover?<IconLayoutSidebarFilled size={20}/>:<IconLayoutSidebar size={20} />}
           </button>
 
           <h1 className="text-xl font-semibold">{getHeaderTitle()}</h1>
@@ -110,30 +117,36 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
             />
           </div>
 
-          <div className="flex border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden">
-            <button
-              onClick={() => onViewChange("day")}
-              className={`p-2 ${view === "day" ? "bg-neutral-200 dark:bg-neutral-700" : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"}`}
-              aria-label="Day view"
-            >
-              <IconList size={20} />
-            </button>
-            <button
-              onClick={() => onViewChange("week")}
-              className={`p-2 ${view === "week" ? "bg-neutral-200 dark:bg-neutral-700" : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"}`}
-              aria-label="Week view"
-            >
-              <IconLayoutGrid size={20} />
-            </button>
-            <button
-              onClick={() => onViewChange("month")}
-              className={`p-2 ${view === "month" ? "bg-neutral-200 dark:bg-neutral-700" : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"}`}
-              aria-label="Month view"
-            >
-              <IconCalendar size={20} />
-            </button>
+          <div 
+            className="flex border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden relative"
+          >
+            {toggleButtons.map((i) => (
+              <div key={i.title}>
+                <button
+                  onMouseEnter={() => setHoveredButton(i.title)}
+                  onMouseLeave={() => setHoveredButton(null)}
+                  onClick={() => onViewChange(i.title)}
+                  className={`p-2 ${view === i.title ? "bg-neutral-200 dark:bg-neutral-700" : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"}`}
+                  aria-label={`${i.title} view`}
+                >
+                  {i.icon}
+                </button>
+                <AnimatePresence>
+                  {hoveredButton === i.title && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-sm font-semibold fixed top-32 px-2 bg-black/5 dark:bg-white/20 rounded-full"
+                    >
+                      {i.title}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
           </div>
-
           <Button
             onClick={onAddEvent}
             className="p-2 rounded-full flex items-center dark:bg-neutral-800 dark:text-white"
@@ -148,3 +161,16 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
 };
 
 export default CalendarHeader;
+
+const toggleButtons = [
+  { 
+    title:"month",
+    icon: <IconCalendar size={20} />,
+  }, {
+    title:"week",
+    icon: <IconLayoutGrid size={20} />,
+  }, {
+    title: "day",
+    icon: <IconList size={20}/>
+  }
+]

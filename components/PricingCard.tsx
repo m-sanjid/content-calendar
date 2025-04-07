@@ -12,7 +12,7 @@ const PricingCard = () => {
 				{price.map((i) => (
 					<motion.div
 						key={i.title}
-						className={`relative ${i.title === "Professional" ? "bg-gray-800 text-white" : "bg-inherit dark:bg-white/5"} py-10 px-4 flex flex-col items-center rounded-md shadow-2xl`}
+						className={`relative ${i.title === "Professional" ? "bg-neutral-800 text-white" : "bg-inherit dark:bg-white/5"} py-10 px-4 flex flex-col items-center rounded-md shadow-2xl`}
 					>
 						<div>
 							<h1 className="font-bold text-xl mb-2">{i.title}</h1>
@@ -37,7 +37,7 @@ const PricingCard = () => {
 						</div>
 						<div className="absolute bottom-6">
 							<Button
-								className="rounded-full px-8 mx-auto"
+								className={`rounded-full px-8 mx-auto ${i.title === "Professional" && "dark:bg-black"}`}
 								variant={i.title === "Professional" ? "secondary" : "default"}
 							>
 								{i.price !== "Custom" ? "Buy Now" : "Contact Us"}

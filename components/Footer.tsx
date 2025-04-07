@@ -16,7 +16,7 @@ const Footer = () => {
 					<FooterCard />
 				</div>
 			</div>
-			<footer className="text-sm flex justify-between items-center border-t p-4 mt-6 text-slate-700">
+			<footer className="text-sm flex justify-between items-center border-t p-4 mt-6 text-neutral-600 dark:text-neutral-300">
 				<div>&copy; 2025 ContentCal. All rights reserved</div>
 				<div className="font-light">
 					Made by{" "}

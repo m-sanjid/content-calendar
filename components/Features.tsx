@@ -3,7 +3,7 @@ import FeatureCard from "./FeatureCard";
 
 const Features = () => {
   return (
-    <div className="my-20">
+    <div className="my-20 mx-auto w-full">
       <div>
         <h1 className="text-2xl font-semibold text-center mb-6">
           Everything you need for content planning

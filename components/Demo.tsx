@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 
 const Demo = () => {
   return (
-    <div className="my-20 py-80 flex flex-col items-center">
+    <div className="flex flex-col items-center">
       <div className="relative mt-12 group">
         <motion.h1
           initial={{ opacity: 0, translateY: 20 }}

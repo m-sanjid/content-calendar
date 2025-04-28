@@ -21,6 +21,8 @@ model User {
   firstName String?
   lastName  String?
   events    CalendarEvent[]
+  posts     Post[]
+  content   Content[]
   createdAt DateTime        @default(now())
 }
 
@@ -54,7 +56,7 @@ model Recurring {
   eventId   String         @unique
   frequency Frequency      @default(None)
   interval  Int            @default(1)
-  event     CalendarEvent? @relation(fields: [eventId], references: [id]) // 👈 Make it optional
+  event     CalendarEvent? @relation(fields: [eventId], references: [id])
 }
 
 enum Frequency {
@@ -63,4 +65,41 @@ enum Frequency {
   Weekly
   Monthly
   Yearly
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  content     String
+  scheduledAt DateTime
+  isPosted    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  userId String @unique
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Content {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  content     String
+  status      String   @default("draft") // draft, scheduled, published
+  platform    String   // e.g., "twitter", "linkedin", "facebook"
+  scheduledAt DateTime?
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  reminders   Reminder[]
+}
+
+model Reminder {
+  id        String   @id @default(cuid())
+  contentId String
+  content   Content  @relation(fields: [contentId], references: [id])
+  time      DateTime
+  status    String   @default("pending") // pending, sent
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

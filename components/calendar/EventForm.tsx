@@ -13,8 +13,8 @@ import {
   IconRepeat,
   IconAlignLeft
 } from "@tabler/icons-react";
-import { CalendarEvent } from "../../types";
 import { Button } from "../ui/button";
+import { CalendarEvent, Priority, RecurringFrequency } from "../../types";
 
 interface EventFormProps {
   event?: CalendarEvent;
@@ -22,9 +22,10 @@ interface EventFormProps {
   onClose: () => void;
   onSave: (event: CalendarEvent) => void;
   onDelete?: (eventId: string) => void;
+  userId: string; 
 }
 
-const priorityOptions: Array<{ value: "Low" | "Medium" | "High", label: string, color: string }> = [
+const priorityOptions: Array<{ value: Priority, label: string, color: string }> = [
   { value: "Low", label: "Low", color: "bg-blue-500" },
   { value: "Medium", label: "Medium", color: "bg-yellow-500" },
   { value: "High", label: "High", color: "bg-red-500" }
@@ -53,7 +54,8 @@ const EventForm: React.FC<EventFormProps> = ({
   isOpen,
   onClose,
   onSave,
-  onDelete
+  onDelete,
+  userId
 }) => {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -62,10 +64,10 @@ const EventForm: React.FC<EventFormProps> = ({
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState<string[]>([]);
-  const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Medium");
+  const [priority, setPriority] = useState<Priority>("Medium");
   const [color, setColor] = useState<string>("blue");
-  const [isRecurring, setIsRecurring] = useState(false);
-  const [recurringPattern, setRecurringPattern] = useState<string>("weekly");
+  const [isRecurring, setIsRecurring] = useState<boolean>(false);
+  const [recurringFrequency, setRecurringFrequency] = useState<RecurringFrequency>("weekly");
   const [tagInput, setTagInput] = useState("");
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
   const [filteredTagSuggestions, setFilteredTagSuggestions] = useState<string[]>([]);
@@ -81,8 +83,8 @@ const EventForm: React.FC<EventFormProps> = ({
       setTags(event.tags || []);
       setPriority(event.priority || "Medium");
       setColor(event.color || "blue");
-      setIsRecurring(event.isRecurring || false);
-      setRecurringPattern(event.recurringPattern || "weekly");
+      setIsRecurring(!!event.recurring);
+      setRecurringFrequency(event.recurring?.frequency || "weekly");
     } else {
       const now = new Date();
       const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
@@ -96,9 +98,10 @@ const EventForm: React.FC<EventFormProps> = ({
       setPriority("Medium");
       setColor("blue");
       setIsRecurring(false);
-      setRecurringPattern("weekly");
+      setRecurringFrequency("weekly");
     }
   }, [event]);
+
   // Filter tag suggestions based on input
   useEffect(() => {
     if (tagInput) {
@@ -210,8 +213,12 @@ const EventForm: React.FC<EventFormProps> = ({
       tags: tags.length > 0 ? tags : [],
       priority,
       color,
-      isRecurring,
-      recurringPattern: isRecurring ? recurringPattern : "none"
+      userId,
+      recurring: isRecurring ? {
+        frequency: recurringFrequency,
+        eventId: event?.recurring?.eventId || event?.id || `event-${Date.now()}`,
+        ...(event?.recurring?.id ? { id: event.recurring.id } : {})
+      } : null
     };
     
     onSave(updatedEvent);
@@ -342,8 +349,8 @@ const EventForm: React.FC<EventFormProps> = ({
             
             {isRecurring && (
               <select
-                value={recurringPattern}
-                onChange={(e) => setRecurringPattern(e.target.value)}
+                value={recurringFrequency}
+                onChange={(e) => setRecurringFrequency(e.target.value as RecurringFrequency)}
                 className="w-full p-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-sm"
               >
                 <option value="daily">Daily</option>
@@ -535,4 +542,4 @@ const EventForm: React.FC<EventFormProps> = ({
   );
 };
 
-export default EventForm; 
+export default EventForm;
